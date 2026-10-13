@@ -80,10 +80,13 @@ export function http<T>(options: MyOptions) {
         }
         // ---------- 正常分支 ----------
         const body = res.data as IResponse<T>
-        if (res.statusCode === 200 && body.code === 0)
+        if (res.statusCode === 200 && body.code === 0) {
           resolve(body.data)
-        // eslint-disable-next-line ts/no-unused-expressions
-        else uni.showToast({ icon: 'none', title: body?.msg || '请求失败' }), reject(body)
+        }
+        else {
+          uni.showToast({ icon: 'none', title: body?.msg || (body as any)?.detail?.[0]?.msg || '请求失败' })
+          reject(body)
+        }
       },
       fail: (err) => {
         uni.showToast({ icon: 'none', title: '网络错误' })

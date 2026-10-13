@@ -4,7 +4,7 @@ import type { CustomTabBarItem, NativeTabBarItem } from './types'
 /**
  * tabbar 选择的策略，更详细的介绍见 tabbar.md 文件
  * 0: 'NO_TABBAR' `无 tabbar`
- * 1: 'NATIVE_TABBAR'  `原生 tabbar`
+ * 1: 'NATIVE_TABBAR' `原生 tabbar`
  * 2: 'CUSTOM_TABBAR' `自定义 tabbar`
  *
  * 温馨提示：本文件的任何代码更改了之后，都需要重新运行，否则 pages.json 不会更新导致配置不生效
@@ -44,69 +44,21 @@ export const customTabbarList: CustomTabBarItem[] = [
   {
     text: '首页',
     pagePath: 'pages/index/index',
-    // 注意 unocss 图标需要如下处理：（二选一）
-    // 1）在fg-tabbar.vue页面上引入一下并注释掉（见tabbar/index.vue代码第2行）
-    // 2）配置到 unocss.config.ts 的 safelist 中
     iconType: 'unocss',
     icon: 'i-carbon-home',
-    // badge: 'dot',
   },
-  // 鼓包配置示例（2025-12-31）
-  // 中间鼓包tabbarItem配置：通常是扫描按钮、发布按钮、更多按钮等，点击触发业务逻辑
-  // {
-  //   pagePath: 'pages/me/me',
-  //   text: '我的',
-  //   // 1）在fg-tabbar.vue页面上引入一下并注释掉（见tabbar/index.vue代码第2行）
-  //   // 2）配置到 unocss.config.ts 的 safelist 中
-  //   iconType: 'image',
-  //   icon: '/static/tabbar/scan.png',
-  //   isBulge: true,
-  // },
   {
-    pagePath: 'pages/about/about',
-    text: '关于',
-    // 1）在fg-tabbar.vue页面上引入一下并注释掉（见tabbar/index.vue代码第2行）
-    // 2）配置到 unocss.config.ts 的 safelist 中
+    text: '出行',
+    pagePath: 'pages/travel/index',
     iconType: 'unocss',
-    icon: 'i-carbon-menu',
-    // badge: 10,
-    roles: ['admin'],
+    icon: 'i-carbon-location',
   },
   {
-    pagePath: 'pages/me/me',
     text: '我的',
-    // 1）在fg-tabbar.vue页面上引入一下并注释掉（见tabbar/index.vue代码第2行）
-    // 2）配置到 unocss.config.ts 的 safelist 中
+    pagePath: 'pages/me/me',
     iconType: 'unocss',
     icon: 'i-carbon-user',
-    // badge: 10,
   },
-
-  // 其他类型演示
-  // 1、uiLib
-  // {
-  //   pagePath: 'pages/index/index',
-  //   text: '首页',
-  //   iconType: 'uiLib',
-  //   icon: 'home',
-  // },
-  // 2、iconfont
-  // {
-  //   pagePath: 'pages/index/index',
-  //   text: '首页',
-  //   // 注意 iconfont 图标需要额外加上 'iconfont'，如下
-  //   iconType: 'iconfont',
-  //   icon: 'iconfont icon-my',
-  // },
-  // 3、image
-  // {
-  //   pagePath: 'pages/index/index',
-  //   text: '首页',
-  //   // 使用 ‘image’时，需要配置 icon + iconActive 2张图片
-  //   iconType: 'image',
-  //   icon: '/static/tabbar/home.png',
-  //   iconActive: '/static/tabbar/homeHL.png',
-  // },
 ]
 
 /**
