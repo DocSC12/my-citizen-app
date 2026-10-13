@@ -1,53 +1,59 @@
 <template>
   <view class="demo">
-    <text class="title">{{ title }}</text>
-    <text class="info">onShow 已触发:{{ showCount }} 次</text>
-    <button class="mb" @click="count++">
-      点了 {{ count }} 次
+    <text class="title">双 token 实验台</text>
+    <text class="info">昵称:{{ nickname || '(未获取)' }}</text>
+    <text class="info">accessToken:{{ tokenStore.accessToken || '(无)' }}</text>
+    <button class="mb" type="primary" @click="doLogin">
+      1. 登录
     </button>
-
-    <button class="mb" type="primary" @click="goDetail">
-      navigateTo:进详情页(能返回)
+    <button class="mb" @click="fetchUserInfo">
+      2. 获取用户信息
     </button>
-    <button class="mb" type="warn" @click="goRedirect">
-      redirectTo:替换当前页(回不来)
+    <button class="mb" @click="fetchUserInfo3">
+      3. 并发获取三次(测刷新队列)
     </button>
-    <button class="mb" @click="showStack">
-      打印页面栈(看控制台)
+    <button class="mb" @click="clearAll">
+      清除全部 token
     </button>
   </view>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { onShow } from '@dcloudio/uni-app'
+import { useTokenStore } from '@/store/token'
+import { httpGet, httpPost } from '@/http/http'
 
-const title = ref('我的第一个小程序')
-const count = ref(0)
-const showCount = ref(0)
+definePage({ style: { navigationBarTitleText: '实验台' } })
 
-// onShow:每次页面"变得可见"都触发——包括从详情页返回来
-onShow(() => {
-  showCount.value++
-  console.log('首页 onShow 第', showCount.value, '次')
-})
+const tokenStore = useTokenStore()
+const nickname = ref('')
 
-function goDetail() {
-  uni.navigateTo({ url: '/pages/detail/index?id=42' })
-  // 跳转是异步的,半秒后打印,能"抓拍"到栈变长
-  setTimeout(() => {
-    console.log('跳转后页面栈:', getCurrentPages().map(p => p.route))
-  }, 500)
+async function doLogin() {
+  const data = await httpPost<{ accessToken: string, refreshToken: string }>('/login', {
+    username: 'admin',
+    password: '123456',
+  })
+  tokenStore.setTokenInfo(data.accessToken, data.refreshToken)
+  uni.showToast({ title: '登录成功', icon: 'success' })
 }
 
-function goRedirect() {
-  uni.redirectTo({ url: '/pages/detail/index?id=99' })
+async function fetchUserInfo() {
+  const data = await httpGet<{ nickname: string }>('/user-info')
+  nickname.value = data.nickname
 }
 
-function showStack() {
-  const stack = getCurrentPages()
-  console.log('当前页面栈:', stack.map(p => p.route))
-  uni.showToast({ title: `栈长度 ${stack.length}`, icon: 'none' })
+async function fetchUserInfo3() {
+  const [a] = await Promise.all([
+    httpGet<{ nickname: string }>('/user-info'),
+    httpGet<{ nickname: string }>('/user-info'),
+    httpGet<{ nickname: string }>('/user-info'),
+  ])
+  nickname.value = `${a.nickname}(3 个并发全成功)`
+}
+
+function clearAll() {
+  tokenStore.clearToken()
+  nickname.value = ''
 }
 </script>
 
@@ -63,7 +69,7 @@ function showStack() {
 }
 .info {
   display: block;
-  margin-bottom: 40rpx;
+  margin-bottom: 16rpx;
   font-size: 28rpx;
   color: #64748b;
 }
