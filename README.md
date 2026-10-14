@@ -1,98 +1,73 @@
-<p align="center">
-  <a href="https://github.com/unibest-tech/unibest">
-    <img width="160" src="./src/static/logo.svg">
-  </a>
-</p>
+# my-citizen-app
 
-<h1 align="center">
-  <a href="https://github.com/unibest-tech/unibest" target="_blank">unibest - 最好的 uniapp 开发框架</a>
-</h1>
+> 城市公共服务小程序：政务服务大厅 + 出行查询，uni-app + FastAPI 全栈实现。
+> 仿「临汾公众服务」小程序的独立复刻，个人学习项目。
 
-<div align="center">
-旧仓库 codercup 进不去了，star 也拿不回来，这里也展示一下那个地址的 star.
+## 功能特性
 
-[![GitHub Repo stars](https://img.shields.io/github/stars/codercup/unibest?style=flat&logo=github)](https://github.com/codercup/unibest)
-[![GitHub forks](https://img.shields.io/github/forks/codercup/unibest?style=flat&logo=github)](https://github.com/codercup/unibest)
+- **服务大厅**：轮播运营位、8 大服务宫格（社保 / 公积金 / 医疗挂号 / 生活缴费等）、政务公告
+- **服务列表 / 详情**：分类过滤、办理材料、办理流程、一键拨打咨询热线
+- **出行服务**：公交班次 / 站点 / 票价查询
+- **登录鉴权（项目核心）**
+  - 双 token 无感刷新：accessToken 过期后由 refreshToken 静默换新，请求队列挂起 + 重放，用户全程无感知
+  - 登录安全：pydantic 参数校验（422 精确到字段）+ 密码连错 5 次锁定 10 分钟（HTTP 423 Locked）
+  - 前端防连点锁，前后端双重校验
+- **持久化登录态**：Pinia + Storage 双写，冷启动自动恢复
 
-</div>
+## 技术栈
 
-<div align="center">
+| 层 | 技术 |
+| --- | --- |
+| 前端 | uni-app + Vue 3 + TypeScript + Pinia + UnoCSS（基于 unibest 模板） |
+| 后端 | Python FastAPI + pydantic |
+| 工程化 | ESLint + Husky + commitlint + vitest |
 
-[![GitHub Repo stars](https://img.shields.io/github/stars/feige996/unibest?style=flat&logo=github)](https://github.com/feige996/unibest)
-[![GitHub forks](https://img.shields.io/github/forks/feige996/unibest?style=flat&logo=github)](https://github.com/feige996/unibest)
-[![star](https://gitee.com/feige996/unibest/badge/star.svg?theme=dark)](https://gitee.com/feige996/unibest/stargazers)
-[![fork](https://gitee.com/feige996/unibest/badge/fork.svg?theme=dark)](https://gitee.com/feige996/unibest/members)
-![node version](https://img.shields.io/badge/node-%3E%3D18-green)
-![pnpm version](https://img.shields.io/badge/pnpm-%3E%3D7.30-green)
-![GitHub package.json version (subfolder of monorepo)](https://img.shields.io/github/package-json/v/feige996/unibest)
-![GitHub License](https://img.shields.io/github/license/feige996/unibest)
+## 项目结构
 
-</div>
+```
+├── src/
+│   ├── pages/          # 页面：首页 / 登录 / 服务列表 / 服务详情 / 出行 / 我的
+│   ├── http/http.ts    # 请求封装：401 无感刷新（单飞刷新 + 队列重放 + 防死循环保险丝）
+│   ├── store/token.ts  # Pinia 双 token 管理（内存 + Storage 双写）
+│   └── tabbar/          # 自定义 tabbar（角色可控）
+└── server/
+    └── main.py          # FastAPI 后端：校验 / 锁定 / 业务接口
+```
 
-`unibest` —— 最好的 `uniapp` 开发模板，由 `uniapp` + `Vue3` + `Ts` + `Vite5` + `UnoCss` + `wot-ui` + `z-paging` 构成，使用了最新的前端技术栈，无需依靠 `HBuilderX`，通过命令行方式运行 `web`、`小程序` 和 `App`（编辑器推荐 `VSCode`，可选 `webstorm`）。
+## 快速启动
 
-`unibest` 内置了 `约定式路由`、`layout布局`、`请求封装`、`请求拦截`、`登录拦截`、`UnoCSS`、`i18n多语言` 等基础功能，提供了 `代码提示`、`自动格式化`、`统一配置`、`代码片段` 等辅助功能，让你编写 `uniapp` 拥有 `best` 体验 （ `unibest 的由来`）。
+### 后端（FastAPI）
 
-![](https://raw.githubusercontent.com/andreasbm/readme/master/screenshots/lines/rainbow.png)
+```bash
+cd server
+pip install fastapi uvicorn
+uvicorn main:app --port 8000 --reload
+```
 
-<p align="center">
-  <a href="https://unibest.tech/" target="_blank">📖 文档地址(new)</a>
-  <span style="margin:0 10px;">|</span>
-  <a href="https://unibest-tech.github.io/hello-unibest" target="_blank">📱 DEMO 地址</a>
-</p>
+接口文档自动生成：<http://127.0.0.1:8000/docs>
 
----
+### 前端（uni-app 小程序）
 
-注意旧的地址 [codercup](https://github.com/codercup/unibest) 我进不去了，使用新的 [feige996](https://github.com/feige996/unibest)。PR和 issue 也请使用新地址，否则无法合并。
+```bash
+pnpm install
+pnpm dev:mp-weixin
+```
 
-## 平台兼容性
+用微信开发者工具导入 `dist/dev/mp-weixin`，并在详情中勾选「不校验合法域名」。
 
-| H5  | IOS | 安卓 | 微信小程序 | 字节小程序 | 快手小程序 | 支付宝小程序 | 钉钉小程序 | 百度小程序 |
-| --- | --- | ---- | ---------- | ---------- | ---------- | ------------ | ---------- | ---------- |
-| √   | √   | √    | √          | √          | √          | √            | √          | √          |
+**测试账号**：`admin` / `123456`（accessToken 有效期故意设为 60 秒，便于观察无感刷新）
 
-注意每种 `UI框架` 支持的平台有所不同，详情请看各 `UI框架` 的官网，也可以看 `unibest` 文档。
+## 学习里程碑
 
-## ⚙️ 环境
+| 提交 | 内容 |
+| --- | --- |
+| `feat: init` | unibest 模板初始化，跑通微信小程序 |
+| `feat: page stack` | 页面路由实验：四种跳转 API / 页面栈 / onLoad 与 onShow |
+| `feat: silent refresh` | 双 token 无感刷新全链路（前端队列 + FastAPI 后端） |
+| `feat: full app` | 完整业务成品：校验层 + 锁定 + 服务 / 公告 / 公交接口 |
 
-- node>=18
-- pnpm>=7.30
-- Vue Official>=2.1.10
-- TypeScript>=5.0
+## 出处声明
 
-## 新版分支 
-- main == base
-- base --> base-i18n
-- base-login --> base-login-i18n
-
-## &#x1F4C2; 快速开始
-
-执行 `pnpm create unibest` 创建项目
-执行 `pnpm i` 安装依赖
-执行 `pnpm dev` 运行 `H5`
-执行 `pnpm dev:mp` 运行 `微信小程序`
-
-## 📦 运行（支持热更新）
-
-- web平台： `pnpm dev:h5`, 然后打开 [http://localhost:9000/](http://localhost:9000/)。
-- weixin平台：`pnpm dev:mp` 然后打开微信开发者工具，导入本地文件夹，选择本项目的`dist/dev/mp-weixin` 文件。
-- APP平台：`pnpm dev:app`, 然后打开 `HBuilderX`，导入刚刚生成的`dist/dev/app` 文件夹，选择运行到模拟器(开发时优先使用)，或者运行的安卓/ios基座。(如果是 `安卓` 和 `鸿蒙` 平台，则不用这个方式，可以把整个unibest项目导入到hbx，通过hbx的菜单来运行到对应的平台。)
-
-## 🔗 发布
-
-- web平台： `pnpm build:h5`，打包后的文件在 `dist/build/h5`，可以放到web服务器，如nginx运行。如果最终不是放在根目录，可以在 `manifest.config.ts` 文件的 `h5.router.base` 属性进行修改。
-- weixin平台：`pnpm build:mp`, 打包后的文件在 `dist/build/mp-weixin`，然后通过微信开发者工具导入，并点击右上角的“上传”按钮进行上传。
-- APP平台：`pnpm build:app`, 然后打开 `HBuilderX`，导入刚刚生成的`dist/build/app` 文件夹，选择发行 - APP云打包。(如果是 `安卓` 和 `鸿蒙` 平台，则不用这个方式，可以把整个unibest项目导入到hbx，通过hbx的菜单来发行到对应的平台。)
-
-## 📄 License
-
-[MIT](https://opensource.org/license/mit/)
-
-Copyright (c) 2025 菲鸽
-
-## 捐赠
-
-<p align='center'>
-<img alt="special sponsor appwrite" src="https://oss.laf.run/ukw0y1-site/pay/wepay.png" height="330" style="display:inline-block; height:330px;">
-<img alt="special sponsor appwrite" src="https://oss.laf.run/ukw0y1-site/pay/alipay.jpg" height="330" style="display:inline-block; height:330px; margin-left:10px;">
-</p>
+- 项目骨架基于 [unibest](https://github.com/feige996/unibest) 模板（gitee 镜像同步）
+- 双 token 无感刷新方案参考芋道源码 ruoyi-vue-pro 的单飞刷新 + 队列重放思路，简化为教学实现
+- 业务形态参考「临汾公众服务」小程序
