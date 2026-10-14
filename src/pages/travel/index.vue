@@ -5,7 +5,7 @@
       <view class="weather-left">
         <text class="temp">18°</text>
         <view class="weather-desc">
-          <text class="city">临汾 · 晴</text>
+          <text class="city">XX市 · 晴</text>
           <text class="air">空气质量 优 · 适宜出行</text>
         </view>
       </view>
